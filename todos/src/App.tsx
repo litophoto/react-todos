@@ -1,45 +1,28 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import React, { useEffect, useState } from "react";
+import { Todo } from "./models/Todo";
+import { useFetch } from "./hooks/useFetch";
+import { getTodos, postTodo } from "./hooks/todosHooks";
+import OnePageTodos from "./OnePageTodos";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  // const [todoList, setTodoList] = useState<Todo[]>([
+  //   { id: 1, title: "aaa", done: true },
+  // ]);
+  // const { data: todos } = useFetch<Todo[]>(
+  //   "http://127.0.0.1:8000/api/v1/todos/"
+  // );
+  // useEffect(() => {
+  //   console.log(todos);
+  //   console.log(todoList);
+  // }, []);
+  // useEffect(() => {
+  //   setTodoList(todos)
+  // }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+    <>
+      <OnePageTodos></OnePageTodos>
+    </>
+  );
 }
 
-export default App
+export default App;
