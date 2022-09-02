@@ -35,7 +35,7 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: '75%',
+  width: "75%",
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 2,
@@ -71,22 +71,16 @@ function OnePageTodos() {
     setFilteredTodos(todosFilter(todos)[visibility]);
   }, [todos, visibility]);
 
-  const refAddNewTodoInput = useRef<HTMLDivElement>(null);
   const [isOpenAddTodoModal, setIsOpenAddTodoModal] = useState(false);
   const openAddTodoModal = () => {
     setIsOpenAddTodoModal(true);
-    const node = refAddNewTodoInput.current;
-    if (node !== null) {
-      node.focus();
-      console.log('focused')
-    }
   };
   const closeAddTodoModal = () => {
     setIsOpenAddTodoModal(false);
   };
 
   const [newTodoTitle, setNewTodoTitle] = useState("");
-  const changeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const changeNewTodoTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewTodoTitle(event.target.value);
   };
   const addNewTodo = (
@@ -143,6 +137,60 @@ function OnePageTodos() {
     });
   };
 
+  const [editedTodo, setEditedTodo] = useState<Todo>({
+    id: 0,
+    title: "",
+    done: false,
+  });
+  const [isOpenEditTodoModal, setIsOpenEditTodoModal] = useState(false);
+  const openEditTodoModal = () => {
+    setIsOpenEditTodoModal(true);
+  };
+  const closeEditTodoModal = () => {
+    setIsOpenEditTodoModal(false);
+  };
+  const changeEditTodoTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTodo: Todo = {
+      id: editedTodo.id,
+      title: event.target.value,
+      done: editedTodo.done,
+    };
+    setEditedTodo(newTodo);
+  };
+  const editTodo = (event: React.MouseEvent<HTMLElement>, todo: Todo) => {
+    setEditedTodo(todo);
+    setIsOpenEditTodoModal(true);
+  };
+  const doneEdit = (
+    event:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    const newTodo = {
+      title: editedTodo.title,
+      done: editedTodo.done,
+    };
+    fetch(url + editedTodo.id + "/", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTodo),
+    }).then(async (response) => {
+      const responseData = await response.json();
+      const newTodos = todos.map((todoItem) => {
+        if (todoItem.id === editedTodo.id) return responseData;
+        return todoItem;
+      });
+      setTodos(newTodos);
+      closeEditTodoModal();
+    });
+  };
+  const onEnterEditTodo = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+    doneEdit(event);
+  };
+
   const deleteTodo = (
     event: React.MouseEvent<HTMLButtonElement>,
     todo: Todo
@@ -159,6 +207,22 @@ function OnePageTodos() {
       });
       setTodos(newTodos);
     });
+    setEditedTodo({ id: 0, title: "", done: false });
+  };
+
+  const allDeleteDone = () => {
+    todosFilter(todos)["done"].map((todo) => {
+      fetch(url + todo.id + "/", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(async (response) => {
+        console.log(response.json() + " is delete");
+      });
+    });
+    setTodos(todosFilter(todos)["active"]);
+    setVisibility("all");
   };
   return (
     <>
@@ -175,6 +239,7 @@ function OnePageTodos() {
           {filteredTodos.map((todo) => (
             <ListItem
               key={todo.id}
+              onClick={(e) => editTodo(e, todo)}
               secondaryAction={
                 <IconButton edge="end" onClick={(e) => deleteTodo(e, todo)}>
                   <DeleteIcon color="error"></DeleteIcon>
@@ -193,6 +258,15 @@ function OnePageTodos() {
               </ListItemButton>
             </ListItem>
           ))}
+          <ListItem>
+            {visibility === "done" && (
+              <>
+                <Button onClick={allDeleteDone} color="error">
+                  All Delete
+                </Button>
+              </>
+            )}
+          </ListItem>
         </List>
         <AppBar
           position="fixed"
@@ -216,6 +290,7 @@ function OnePageTodos() {
           </Toolbar>
         </AppBar>
       </Container>
+      {/* AddModal */}
       <Modal open={isOpenAddTodoModal} onClose={closeAddTodoModal}>
         <Card sx={modalStyle}>
           <CardContent>
@@ -227,9 +302,8 @@ function OnePageTodos() {
             </Box>
             <TextField
               value={newTodoTitle}
-              onChange={changeTitle}
+              onChange={changeNewTodoTitle}
               onKeyDown={onEnterAddNewTodo}
-              inputRef={refAddNewTodoInput}
               sx={{ width: "100%", mt: 3 }}
               id="add-new-todotitle"
               label="New todo"
@@ -241,6 +315,35 @@ function OnePageTodos() {
               onClick={addNewTodo}
             >
               Add
+            </Button>
+          </CardContent>
+        </Card>
+      </Modal>
+      {/* EditModal */}
+      <Modal open={isOpenEditTodoModal} onClose={closeEditTodoModal}>
+        <Card sx={modalStyle}>
+          <CardContent>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="h6">How to change?</Typography>
+              <IconButton>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <TextField
+              value={editedTodo.title}
+              onChange={changeEditTodoTitle}
+              onKeyDown={onEnterEditTodo}
+              id="edit-new-todotitle"
+              label="New todo"
+              sx={{ width: "100%", mt: 3 }}
+              variant="outlined"
+            />
+            <Button
+              variant="contained"
+              sx={{ mt: 2, width: "100%" }}
+              onClick={doneEdit}
+            >
+              Done
             </Button>
           </CardContent>
         </Card>
