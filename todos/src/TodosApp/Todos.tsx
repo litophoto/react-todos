@@ -48,8 +48,15 @@ const todosFilter = (todos: Todo[]) => {
   };
 };
 
+const url = "http://127.0.0.1:8001/api/v1/todos/";
+const myHeaders = new Headers({
+  "Content-Type": "application/json",
+});
+const myRequest = new Request(url, {
+  headers: myHeaders,
+});
+
 function OnePageTodos() {
-  const url = "http://127.0.0.1:8001/api/v1/todos/";
   const [todos, setTodos] = useState<Todo[]>([]);
   useEffect(() => {
     (async () => {
@@ -95,11 +102,9 @@ function OnePageTodos() {
       done: false,
     };
 
-    fetch(url, {
+    fetch(myRequest, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: myHeaders,
       body: JSON.stringify(newTodo),
     }).then(async (response) => {
       const responseJson = await response.json();
@@ -123,9 +128,7 @@ function OnePageTodos() {
     };
     fetch(url + todo.id + "/", {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: myHeaders,
       body: JSON.stringify(newTodo),
     }).then(async (response) => {
       const responseData = await response.json();
@@ -172,9 +175,7 @@ function OnePageTodos() {
     };
     fetch(url + editedTodo.id + "/", {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: myHeaders,
       body: JSON.stringify(newTodo),
     }).then(async (response) => {
       const responseData = await response.json();
@@ -197,9 +198,7 @@ function OnePageTodos() {
   ) => {
     fetch(url + todo.id + "/", {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: myHeaders,
     }).then(async (response) => {
       const newTodos = todos.filter((todoItem) => {
         if (todoItem.id === todo.id) return;
@@ -214,9 +213,7 @@ function OnePageTodos() {
     todosFilter(todos)["done"].map((todo) => {
       fetch(url + todo.id + "/", {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: myHeaders,
       }).then(async (response) => {
         console.log(response.json() + " is delete");
       });
