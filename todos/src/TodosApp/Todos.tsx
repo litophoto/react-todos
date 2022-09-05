@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Todo, Visibility } from "./models/Todo";
+import { Todo, Visibility } from "./models/Todo.ts/Todo";
 import { Box } from "@mui/system";
 import { Tab, Tabs, Container, Typography, Modal } from "@mui/material";
 import {
@@ -49,7 +49,7 @@ const todosFilter = (todos: Todo[]) => {
 };
 
 function OnePageTodos() {
-  const url = "http://127.0.0.1:8000/api/v1/todos/";
+  const url = "http://127.0.0.1:8001/api/v1/todos/";
   const [todos, setTodos] = useState<Todo[]>([]);
   useEffect(() => {
     (async () => {
