@@ -1,36 +1,28 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Card,
-  CardContent,
   TextField,
-  Modal,
-  Box,
-  Typography,
-  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import { Close as CloseIcon } from "@mui/icons-material";
-
-const modalStyle = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "75%",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 2,
-};
 
 type Props = {
+  title?: string;
+  context?: string;
   open: boolean;
   onClose: () => void;
   defaultText: string;
   label: string;
-  onSubmit: () => void;
+  onSubmit: (text: string) => void;
 };
 export const TodoModal = (props: Props) => {
-  const [text, setText] = useState(props.defaultText);
+  const [text, setText] = useState("");
+  useEffect(() => {
+    setText(props.defaultText);
+  }, [props.defaultText]);
   const changeText = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
   };
@@ -39,7 +31,8 @@ export const TodoModal = (props: Props) => {
       | React.KeyboardEvent<HTMLInputElement>
       | React.MouseEvent<HTMLButtonElement>
   ) => {
-    props.onSubmit();
+    props.onSubmit(text);
+    props.onClose();
   };
   const handleSubmitOnEnter = (
     event: React.KeyboardEvent<HTMLInputElement>
@@ -49,33 +42,27 @@ export const TodoModal = (props: Props) => {
   };
   return (
     <>
-      <Modal open={props.open} onClose={props.onClose}>
-        <Card sx={modalStyle}>
-          <CardContent>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="h6">What do you need next?</Typography>
-              <IconButton onClick={props.onClose}>
-                <CloseIcon />
-              </IconButton>
-            </Box>
-            <TextField
-              value={text}
-              onChange={changeText}
-              onKeyDown={handleSubmitOnEnter}
-              sx={{ width: "100%", mt: 3 }}
-              label={props.label}
-              variant="outlined"
-            />
-            <Button
-              variant="contained"
-              sx={{ mt: 2, width: "100%" }}
-              onClick={handleSubmit}
-            >
-              Add
-            </Button>
-          </CardContent>
-        </Card>
-      </Modal>
+      <Dialog open={props.open} onClose={props.onClose}>
+        <DialogTitle>New Todo</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please Add a new Todo with title
+          </DialogContentText>
+          <TextField
+            value={text}
+            onChange={changeText}
+            onKeyDown={handleSubmitOnEnter}
+            fullWidth
+            label={props.label}
+            variant="standard"
+            autoFocus
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={props.onClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Add</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

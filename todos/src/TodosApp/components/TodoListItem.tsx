@@ -22,7 +22,6 @@ export const TodoListItem = (props: Props) => {
     <>
       <ListItem
         key={todo.id}
-        onClick={(e) => editTodo(e, todo)}
         secondaryAction={
           <IconButton edge="end" onClick={(e) => deleteTodo(e, todo)}>
             <DeleteIcon color="error"></DeleteIcon>
@@ -33,7 +32,7 @@ export const TodoListItem = (props: Props) => {
         <ListItemIcon>
           <Checkbox checked={todo.done} onClick={(e) => toggleDone(e, todo)} />
         </ListItemIcon>
-        <ListItemButton>
+        <ListItemButton onClick={(e) => editTodo(e, todo)}>
           <ListItemText primary={todo.title} />
         </ListItemButton>
       </ListItem>

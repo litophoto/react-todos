@@ -1,11 +1,11 @@
 import OnePageTodos from "./OnePageTodos";
-import { TodoList } from "./TodosApp/components/TodoList";
+import Todos from "./TodosApp/Todos"
 
 function App() {
   return (
     <>
-      <OnePageTodos />
-      {/* <TodoList></TodoList> */}
+      {/* <OnePageTodos /> */}
+      <Todos />
     </>
   );
 }

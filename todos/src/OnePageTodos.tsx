@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Todo, Visibility } from "./models/Todo";
 import { Box } from "@mui/system";
 import { Tab, Tabs, Container, Typography, Modal } from "@mui/material";
@@ -259,11 +259,9 @@ function OnePageTodos() {
           ))}
           <ListItem>
             {visibility === "done" && (
-              <>
-                <Button onClick={allDeleteDone} color="error">
-                  All Delete
-                </Button>
-              </>
+              <Button onClick={allDeleteDone} color="error">
+                All Delete
+              </Button>
             )}
           </ListItem>
         </List>
