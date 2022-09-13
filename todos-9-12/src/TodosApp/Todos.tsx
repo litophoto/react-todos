@@ -9,10 +9,12 @@ import {
   ListItemIcon,
   Checkbox,
   IconButton,
+  Fab,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import { Todo, Visibility } from "./models/Todo";
 import { useTodosAPI } from "./services/TodosAPI";
+import TodoDialog from "./components/TodoDialog";
 
 const Todos = () => {
   const [todos, actions] = useTodosAPI();
@@ -33,6 +35,22 @@ const Todos = () => {
       done: event.target.checked, // or 'done: !todo.done'
     };
     todo.id && actions.edit(todo.id, newTodo);
+  };
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const addTitle = (event: any, newTitle: string) => {
+    const newTodo: Todo = {
+      title: newTitle,
+      done: false,
+    };
+    actions.add(newTodo);
+    setOpen(false);
   };
   return (
     <>
@@ -56,12 +74,22 @@ const Todos = () => {
             <ListItemButton>
               <ListItemText>{todo.title}</ListItemText>
             </ListItemButton>
-            <IconButton>
-              <Add />
+            <IconButton color="error" onClick={() => actions.delete(todo.id)}>
+              <Delete />
             </IconButton>
           </ListItem>
         ))}
       </List>
+      <Fab onClick={handleOpen}>
+        <Add />
+      </Fab>
+      <TodoDialog
+        open={open}
+        label="add"
+        onSubmit={addTitle}
+        onClose={handleClose}
+        title=""
+      />
     </>
   );
 };
