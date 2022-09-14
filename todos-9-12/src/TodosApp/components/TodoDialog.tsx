@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogActions, TextField, Button } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  TextField,
+  Button,
+} from "@mui/material";
 
 type Props = {
   open: boolean;
@@ -27,26 +33,32 @@ const TodoDialog = (props: Props) => {
     setTitle(event.target.value);
   };
   const onSubmit = (event: any, title: string) => {
+    if (!title) return;
     props.onSubmit(event, title);
     setTitle("");
+  };
+  const enterSubmit = (event: any) => {
+    if (event.key !== "Enter") return;
+    onSubmit(event, title);
   };
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
-        <TextField
-          autoFocus
-          margin="dense"
-          label="todo"
-          fullWidth
-          variant="standard"
-          value={title}
-          onChange={handleChangeTitle}
-        ></TextField>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="todo"
+            fullWidth
+            variant="standard"
+            value={title}
+            onChange={handleChangeTitle}
+            onKeyDown={enterSubmit}
+          />
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={(e) => onSubmit(e, title)}>
-            {props.label}
-          </Button>
+          <Button onClick={(e) => onSubmit(e, title)}>{props.label}</Button>
         </DialogActions>
       </Dialog>
     </>
