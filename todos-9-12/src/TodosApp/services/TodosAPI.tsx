@@ -44,12 +44,11 @@ export const useTodosAPI = () => {
         method: "DELETE",
         headers: headers,
       });
-      const data = await response.json();
-      const newTodos = todos.filter((todo) => {
-        if (todo.id === data.id) return false;
+      const newTodos = await todos.filter((todo) => {
+        if (todo.id === todoId) return false;
         return true;
       });
-      setTodos(newTodos);
+      await setTodos(newTodos);
     })();
   };
   const actions = {
