@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import { Tabs, Tab } from "@mui/material";
 import {
@@ -16,6 +16,13 @@ import { Todo, Visibility } from "./models/Todo";
 import { useTodosAPI } from "./services/TodosAPI";
 import TodoDialog from "./components/TodoDialog";
 
+const todosFilter = (todos: Todo[]) => {
+  return {
+    all: todos,
+    active: todos.filter((todo) => !todo.done),
+    done: todos.filter((todo) => todo.done),
+  };
+};
 const Todos = () => {
   const [todos, actions] = useTodosAPI();
   const [visibility, setVisibility] = useState<Visibility>("all");
@@ -25,6 +32,10 @@ const Todos = () => {
   ) => {
     setVisibility(newVisibility);
   };
+  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
+  useEffect(() => {
+    setFilteredTodos(todosFilter(todos)[visibility]);
+  }, [todos, visibility]);
 
   const handleChangeChecked = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -63,7 +74,7 @@ const Todos = () => {
         <Tab label="DONE" value="done" />
       </Tabs>
       <List>
-        {todos.map((todo) => (
+        {filteredTodos.map((todo) => (
           <ListItem key={todo.id}>
             <ListItemIcon>
               <Checkbox
@@ -74,7 +85,10 @@ const Todos = () => {
             <ListItemButton>
               <ListItemText>{todo.title}</ListItemText>
             </ListItemButton>
-            <IconButton color="error" onClick={() => actions.delete(todo.id)}>
+            <IconButton
+              color="error"
+              onClick={() => todo.id && actions.delete(todo.id)}
+            >
               <Delete />
             </IconButton>
           </ListItem>
