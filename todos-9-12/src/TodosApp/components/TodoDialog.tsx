@@ -10,7 +10,7 @@ import {
 type Props = {
   open: boolean;
   label: string;
-  onSubmit: (event: any, title: string) => void;
+  onSubmit: (title: string) => void;
   onClose: () => void;
   title: string;
 };
@@ -32,14 +32,15 @@ const TodoDialog = (props: Props) => {
   ) => {
     setTitle(event.target.value);
   };
-  const onSubmit = (event: any, title: string) => {
+  const onSubmit = (title: string) => {
     if (!title) return;
-    props.onSubmit(event, title);
+    props.onSubmit(title);
+    handleClose();
     setTitle("");
   };
   const enterSubmit = (event: any) => {
     if (event.key !== "Enter") return;
-    onSubmit(event, title);
+    onSubmit(title);
   };
   return (
     <>
@@ -58,7 +59,7 @@ const TodoDialog = (props: Props) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={(e) => onSubmit(e, title)}>{props.label}</Button>
+          <Button onClick={() => onSubmit(title)}>{props.label}</Button>
         </DialogActions>
       </Dialog>
     </>
