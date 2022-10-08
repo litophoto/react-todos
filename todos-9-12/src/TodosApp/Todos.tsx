@@ -55,13 +55,34 @@ const Todos = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const addTitle = (event: any, newTitle: string) => {
+  const addTitle = (newTitle: string) => {
     const newTodo: Todo = {
       title: newTitle,
       done: false,
     };
     actions.add(newTodo);
     setOpen(false);
+  };
+
+  const [edited, setEdited] = useState(false);
+  const handleEditOpen = () => {
+    setEdited(true);
+  };
+  const handleEditClose = () => {
+    setEdited(false);
+  };
+  const [editedTodo, setEditedTodo] = useState<Todo>();
+  const editTodo = (todo: Todo) => {
+    handleEditOpen();
+    setEditedTodo(todo);
+  };
+  const doneEdit = (newTitle: string) => {
+    if (!editedTodo) return;
+    const newTodo: Todo = {
+      title: newTitle,
+      done: editedTodo.done,
+    };
+    editedTodo.id && actions.edit(editedTodo.id, newTodo);
   };
   return (
     <>
@@ -82,7 +103,7 @@ const Todos = () => {
                 onChange={(e) => handleChangeChecked(e, todo)}
               ></Checkbox>
             </ListItemIcon>
-            <ListItemButton>
+            <ListItemButton onClick={() => editTodo(todo)}>
               <ListItemText>{todo.title}</ListItemText>
             </ListItemButton>
             <IconButton
@@ -94,6 +115,16 @@ const Todos = () => {
           </ListItem>
         ))}
       </List>
+      {editedTodo && (
+        <TodoDialog
+          open={edited}
+          label="edit"
+          onSubmit={doneEdit}
+          onClose={handleEditClose}
+          title={editedTodo.title}
+        />
+      )}
+
       <Fab onClick={handleOpen}>
         <Add />
       </Fab>
